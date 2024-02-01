@@ -1,0 +1,27 @@
+name: Docker
+
+on:
+  push: {}
+
+jobs:
+  docker:
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Login to Registry
+        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d
+        with:
+          registry: ghcr.io
+          username: x-oauth-token
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+      - name: Build Image
+        env:
+          DOCKER_BUILDKIT: "1"
+        run: docker build --tag "ghcr.io/$GITHUB_REPOSITORY" .
+      - name: Push Image
+        if: ${{ github.ref == 'refs/heads/master' }}
+        run: docker push "ghcr.io/$GITHUB_REPOSITORY"

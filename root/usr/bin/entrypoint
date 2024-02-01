@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+set -eu
+tmate -F -a /etc/tmate/authorized_keys "$@" new-session chroot /host/ nsenter --mount=/proc/1/ns/mnt sh
